@@ -26,11 +26,12 @@
 			//创建场景
 			var scene = new THREE.Scene();
 			// 相机 正交相机（OrthographicCamera）、透视相机（PerspectiveCamera）、全景相机（CubeCamera）和3D相机（StereoCamera）。
-			var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 600);
+			var camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 600);
 			camera.position.z = 100;
 			// 渲染器
 			var renderer = new THREE.WebGLRenderer({
-				antialias: true
+				antialias: true,
+				alpha: true
 			});
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
@@ -106,7 +107,7 @@
 			
 			//加载图片
 			var loader = new THREE.TextureLoader();
-			loader.load('./iphone.jpg',texture => {
+			loader.load('./bg.jpg',texture => {
 					const material = new THREE.MeshBasicMaterial({
 						map: texture
 					});
@@ -117,8 +118,10 @@
 					// widthSegments — 可选项，x轴方向的切割面，默认是1.
 					// heightSegments — 可选项，y轴上的切割面，默认是1.
 					// depthSegments — 可选项，z轴上的切割面，默认是1.
-					const geometry = new THREE.BoxGeometry(100, 100, 0); //z为0圆点不被遮住
+					console.log(texture.image.naturalWidth*(window.innerWidth/texture.image.naturalWidth)*0.35)
+					const geometry = new THREE.BoxGeometry(texture.image.naturalWidth*(window.innerWidth/texture.image.naturalWidth)*0.35, texture.image.naturalHeight*(window.innerWidth/texture.image.naturalWidth)*0.35, 0); //z为0圆点不被遮住
 					const cube = new THREE.Mesh(geometry, material); // 创建这个mesh对象
+					//cube.scale.set(1, 1, -1)
 					cube.position.x = 0;
 					cube.position.z = 0;
 					cube.position.y = 0;

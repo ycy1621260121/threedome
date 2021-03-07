@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>My first three.js app</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+
+			canvas {
+				width: 600px;
+				height: 600px
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.js"></script>
+		<script>
+			var width = 600; height = 600;
+			var scene = new THREE.Scene();
+			// 相机 正交相机（OrthographicCamera）、透视相机（PerspectiveCamera）、全景相机（CubeCamera）和3D相机（StereoCamera）。
+			var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 600);
+			camera.position.z = 2;
+			// 渲染器
+			var renderer = new THREE.WebGLRenderer({
+				antialias: true
+			});
+			renderer.setSize(width, height);
+
+			document.body.appendChild(renderer.domElement);
+
+			var canvas = document.createElement("canvas");
+			let context = canvas.getContext("2d");
+			var texture = new THREE.CanvasTexture(canvas);
+			// 创建一个几何模型（Geometry）,并添加点
+			var geometry = new THREE.PlaneGeometry()
+
+			var pointsData = [];//点的位置
+			//创建点
+			function createShapePoints() {
+				//创建一个圆形的材质，记得一定要加上texture.needsUpdate = true;
+				canvas.width = 100;
+				canvas.height = 100;
+
+
+				context.fillStyle = "#fff";
+				//canvas 创建圆
+				// http://www.w3school.com.cn/tags/canvas_arc.asp
+				context.arc(50, 50, 45, 0, 2 * Math.PI);
+				context.fill();
+
+				// 创建材质
+				let texture = new THREE.Texture(canvas);
+				texture.needsUpdate = true;
+
+				//创建点，是用PointsMaterial的map属性来设置材质
+				let geometry = new THREE.Geometry();
+				// vertices 表示顶点
+				geometry.vertices = pointsData;
+				console.log(geometry.vertices,pointsData)
+				// 如果这边的颜色没有设置，那么就默认取canvas中的颜色
+				let material = new THREE.PointsMaterial({
+					color: 0xff0000,
+					size: 0.04,
+					map: texture,
+					transparent: true,//为true圆点没有黑边
+				});
+
+				let points = new THREE.Points(geometry, material);
+
+				return points;
+			}
+			
+			var objects=[];
+			var raycaster = new THREE.Raycaster();
+			var mouse = new THREE.Vector2();  //  通过这个来模拟坐标
+			
+			//监听全局点击事件,通过ray检测选中哪一个object
+			document.addEventListener("mousedown", (event) => {
+			　　event.preventDefault();
+			　　mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+			　　mouse.y = - (event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+			 
+			　　raycaster.setFromCamera(mouse, camera);
+			　　scene.children.forEach(child => {
+			　　　　if (child instanceof THREE.Mesh) {//根据需求判断哪些加入objects,也可以在生成object的时候push进objects
+			　　　　　　objects.push(child)
+			　　　　}
+			})
+			var intersects = raycaster.intersectObjects(objects);
+			pointsData.push(new THREE.Vector3(Number(intersects[0].point.x.toFixed(2)), Number(intersects[0].point.y.toFixed(2)), 0));
+			if (intersects.length > 0) {
+			　　//console.log(intersects[0].object)
+				var points = createShapePoints();
+				scene.add(points);
+				render();//画点
+				renderLine()
+			}
+			}, false)
+			
+			// document.addEventListener('click', onEvent)
+			// function onEvent(event) {
+			//     //  获取坐标位置
+			//     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+			//     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+			//     //  
+			//     raycaster.setFromCamera(mouse, camera);
+			//     //  获取选中后的第一个值， 因为可以投射获取，所以只需要获取第一个。
+			//     const interects = raycaster.intersectObjects(scene.children, true)[0];
+			// 	pointsData.push(new THREE.Vector3(Number(interects.point.x.toFixed(2)), Number(interects.point.y.toFixed(2)), 0));
+			// 	renderLine()
+			// 	var points = createShapePoints();
+			// 	scene.add(points);
+			// 	render();//画点
+				
+			// }
+			
+			
+			function renderLine() {
+				var geometry2 = new THREE.Geometry();
+				var lineMaterial = new THREE.LineDashedMaterial({
+				    color: '#ff0000',
+					wireframe:false,
+				});
+				geometry2.vertices = pointsData;
+				var line = new THREE.Line(geometry2, lineMaterial);
+				scene.add(line)
+			}
+			
+
+			var loader = new THREE.TextureLoader();
+
+			loader.load(
+				//图片路径    
+				'./iphone.jpg',
+				function(texture) {
+					const material = new THREE.MeshBasicMaterial({
+						map: texture
+					});
+					// BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments)
+					
+					// width — X轴方向上的长.
+					// height — Y轴方向上的高.
+					// depth — Z轴方向上的宽.
+					// widthSegments — 可选项，x轴方向的切割面，默认是1.
+					// heightSegments — 可选项，y轴上的切割面，默认是1.
+					// depthSegments — 可选项，z轴上的切割面，默认是1.
+					const geometry = new THREE.BoxGeometry(3, 3, 0); //z为0圆点不被遮住
+					const cube = new THREE.Mesh(geometry, material); // 创建这个mesh对象
+
+					cube.position.x = 0;
+					cube.position.z = 0;
+					cube.position.y = 0;
+
+					scene.add(cube); // 将新创建的带贴图的几何体添加到场景内，我们就可以看到了
+					render()
+				},
+				undefined,
+				function(err) {
+					console: error('发生错误');
+				}
+			);
+			function render(){
+				renderer.render(scene, camera);
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,143 @@
+<html>
+
+<head>
+    <meta lang="en">
+    <meta charset="UTF-8">
+    <title>点击绘制点</title>
+    <script src="./js/cuon-utils.js"></script>
+    <style>
+        body{
+            margin:0;
+        }
+        canvas{
+            border:1px solid #999;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="500" height="500" ></canvas>
+	<img src="./iphone.jpg" style="width: 500px;height: 500px;position: absolute;left: 0;top: 0;z-index: -1;">
+	<button id="" onclick="clearhe()">
+		删除
+	</button>
+</body>
+
+<script>
+	// 获取canvas元素
+	var canvas = document.getElementById('canvas');
+	
+	// 获取绘制二维上下文
+	var gl = canvas.getContext('webgl');
+	
+	
+	// var canvas = document.querySelector("#canvas");
+	// var ctx = canvas.getContext("2d");
+	// var img = new Image();
+	// img.src = "./iphone.jpg";
+	// img.onload = function(){
+	// 	draw();
+	// }
+	
+	// function draw(){
+	// 	var pattern = ctx.createPattern(img,"no-repeat")
+	// 	ctx.fillStyle=pattern;
+	// 	ctx.fillRect(0,0,600,400)
+	// }
+
+    // 顶点着色器程序
+    var VSHADER_SOURCE =`
+        attribute vec4 a_Position;
+        void main() {
+            //设置坐标
+            gl_Position = a_Position; 
+            //设置尺寸
+            gl_PointSize = 5.0; 
+        } 
+    `;
+
+    // 片元着色器
+    var FSHADER_SOURCE =`
+        void main() {
+            //设置颜色
+            gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+        }
+    `;
+	
+	var vertexs;
+
+
+    
+    
+    initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE);
+    
+    clear();
+
+    var points = [];
+	var a_Position;
+    canvas.addEventListener('click', (e) => {
+        var pos = getClickedPosOnCanvas(canvas, e.clientX, e.clientY);
+        points.push(pos);
+        clear();
+         a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+        points.forEach(p => {
+            gl.vertexAttrib2f(a_Position, p.x, p.y);
+            /* 绘制一个点 */
+            gl.drawArrays(gl.POINTS, 0, 1);
+        });
+		var vertexsData = [];
+		for (let key of points) {
+			console.log(key)
+			vertexsData.push(key.x, key.y, 0.0)
+		}
+		if(points.length>1){
+			renderImage(vertexsData,points.length)
+		}
+		console.log(vertexsData,points.length)
+    });
+	
+	
+	function initVertexs() {
+	
+	      let vertexsBuffer = gl.createBuffer();
+	
+	      gl.bindBuffer(gl.ARRAY_BUFFER, vertexsBuffer);
+	
+	
+	      gl.bufferData(gl.ARRAY_BUFFER, vertexs, gl.STATIC_DRAW);
+	
+	      //将顶点坐标的位置赋值
+	      gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, vertexs.BYTES_PER_ELEMENT * 3, 0);
+	      gl.enableVertexAttribArray(a_Position);//开启缓冲区属性
+		
+	      return true;
+	    }
+	
+	
+	    function renderImage(vertexsData,num) {
+		 vertexs = new Float32Array(vertexsData)
+		  initVertexs()
+	      gl.drawArrays(gl.LINE_STRIP, 0, num);//几何图形不闭合
+		  //gl.drawArrays(gl.LINE_LOOP, 0, num);//几何图形闭合
+	    }
+    
+    function getClickedPosOnCanvas(canvas, clientX, clientY) {
+        var rect = canvas.getBoundingClientRect();
+        var halfCanvasWidth = canvas.width / 2;
+        var halfCanvasHeight = canvas.height / 2;
+        var x = (clientX - rect.left - halfCanvasWidth) / halfCanvasWidth;
+        var y = (halfCanvasHeight - (clientY - rect.top)) / halfCanvasHeight;
+        return {x, y};
+    }
+    
+    function clear() {
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+	function clearhe() {
+		points = [];
+		gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.disableVertexAttribArray(a_Position);//关闭缓冲区属性
+		canvas.removeEventListener('click',function(){});
+	}
+</script>

@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset=utf-8>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<meta content="always" name="referrer">
+		<meta name="theme-color" content="#2932e1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
 		<title>My first three.js app</title>
 		<style>
 			* {
@@ -18,6 +23,7 @@
 	<body>
 		<script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.js"></script>
 		<script>
+			//创建场景
 			var scene = new THREE.Scene();
 			// 相机 正交相机（OrthographicCamera）、透视相机（PerspectiveCamera）、全景相机（CubeCamera）和3D相机（StereoCamera）。
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 600);
@@ -27,25 +33,23 @@
 				antialias: true
 			});
 			renderer.setSize(window.innerWidth, window.innerHeight);
-
 			document.body.appendChild(renderer.domElement);
-
+			
+			//创建画布
 			var canvas = document.createElement("canvas");
 			let context = canvas.getContext("2d");
 			var texture = new THREE.CanvasTexture(canvas);
 			// 创建一个几何模型（Geometry）,并添加点
 			var geometry = new THREE.PlaneGeometry(128, 32)
-
+			
+			//点得数据
 			var pointsData = [];
 			//创建点
 			function createShapePoints() {
 				//创建一个圆形的材质，记得一定要加上texture.needsUpdate = true;
 				canvas.width = 100;
 				canvas.height = 100;
-
-
 				context.fillStyle = "#fff";
-
 				//canvas 创建圆
 				// http://www.w3school.com.cn/tags/canvas_arc.asp
 				context.arc(50, 50, 45, 0, 2 * Math.PI);
@@ -53,6 +57,7 @@
 
 				// 创建材质
 				let texture = new THREE.Texture(canvas);
+				//更新
 				texture.needsUpdate = true;
 
 				//创建点，是用PointsMaterial的map属性来设置材质
@@ -75,6 +80,7 @@
 			
 			var raycaster = new THREE.Raycaster();
 			var mouse = new THREE.Vector2();  //  通过这个来模拟坐标
+			//监听鼠标事件
 			window.addEventListener('mousedown', onEvent)
 			function onEvent(event) {
 			    //  获取坐标位置
@@ -94,7 +100,7 @@
 			//画线
 			function renderLine() {
 				var geometry2 = new THREE.Geometry();
-				var lineMaterial = new THREE.LineDashedMaterial({
+				var lineMaterial = new THREE.LineBasicMaterial({
 				    color: '#ff0000',
 					wireframe:false,
 				});
@@ -104,7 +110,7 @@
 				render()
 			}
 			
-			//
+			//加载图片
 			var loader = new THREE.TextureLoader();
 			loader.load('./iphone.jpg',texture => {
 					const material = new THREE.MeshBasicMaterial({
@@ -133,6 +139,7 @@
 					console: error('发生错误');
 				}
 			);
+			//渲染
 			function render(){
 				renderer.render(scene, camera);
 			}

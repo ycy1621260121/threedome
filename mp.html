@@ -57,13 +57,8 @@
 
 				//创建点，是用PointsMaterial的map属性来设置材质
 				let geometry = new THREE.Geometry();
-				// 点位置
-				const p1 = new THREE.Vector3(0, 1, 0);
-				const p2 = new THREE.Vector3(15, 15, 0);
-				const p3 = new THREE.Vector3(-15, 15, 0);
 				// vertices 表示顶点
 				geometry.vertices = pointsData;
-				console.log(geometry.vertices,pointsData)
 				// 如果这边的颜色没有设置，那么就默认取canvas中的颜色
 				let material = new THREE.PointsMaterial({
 					color: 0xff0000,
@@ -80,7 +75,7 @@
 			
 			var raycaster = new THREE.Raycaster();
 			var mouse = new THREE.Vector2();  //  通过这个来模拟坐标
-			window.addEventListener('click', onEvent)
+			window.addEventListener('mousedown', onEvent)
 			function onEvent(event) {
 			    //  获取坐标位置
 			    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -94,29 +89,24 @@
 				var points = createShapePoints();
 				scene.add(points);
 				render();//画点
-				
 			}
 			
-			
+			//画线
 			function renderLine() {
 				var geometry2 = new THREE.Geometry();
 				var lineMaterial = new THREE.LineDashedMaterial({
 				    color: '#ff0000',
 					wireframe:false,
 				});
-				console.log(pointsData)
 				geometry2.vertices = pointsData;
 				var line = new THREE.Line(geometry2, lineMaterial);
 				scene.add(line)
 				render()
 			}
-
+			
+			//
 			var loader = new THREE.TextureLoader();
-
-			loader.load(
-				//图片路径    
-				'./iphone.jpg',
-				function(texture) {
+			loader.load('./iphone.jpg',texture => {
 					const material = new THREE.MeshBasicMaterial({
 						map: texture
 					});
@@ -143,8 +133,6 @@
 					console: error('发生错误');
 				}
 			);
-			var points = createShapePoints();
-			scene.add(points);
 			function render(){
 				renderer.render(scene, camera);
 			}

@@ -40,12 +40,12 @@
 
 			var loader = new THREE.TextureLoader();
 			function main() {
-				loader.load('./iphone.jpg',texture =>{
+				loader.load('./lottlybj.jpg',texture =>{
 						const material = new THREE.MeshBasicMaterial({
 							map: texture
 						});
 						console.log(texture)
-						const geometry = new THREE.BoxGeometry(texture.image.naturalWidth/100, texture.image.naturalHeight/100, 0); //z为0圆点不被遮住
+						const geometry = new THREE.BoxGeometry(texture.image.naturalWidth/600, texture.image.naturalHeight/600, 0); //z为0圆点不被遮住
 						 console.log(geometry.parameters)
 						const cube = new THREE.Mesh(geometry, material); // 创建这个mesh对象
 						//cube.scale.set(1, 1, -1)

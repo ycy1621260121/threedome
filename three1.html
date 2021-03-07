@@ -2,6 +2,11 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<meta content="always" name="referrer">
+		<meta name="theme-color" content="#2932e1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
 		<title></title>
 		<style>
 			* {
@@ -18,13 +23,13 @@
 	<body>
 		<script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.js"></script>
 		<script type="text/javascript">
-			var width = 600,
-				height = 600;
+			var width =  600,
+				height =  600;
 				var timeout;
 			var scene = new THREE.Scene();
 			// 相机 正交相机（OrthographicCamera）、透视相机（PerspectiveCamera）、全景相机（CubeCamera）和3D相机（StereoCamera）。
-			var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 600);
-			camera.position.z = 2;
+			var camera = new THREE.PerspectiveCamera(100, 1, 0.1, 1000);
+			camera.position.z = 1;
 			// 渲染器
 			var renderer = new THREE.WebGLRenderer({
 				antialias: true
@@ -35,15 +40,15 @@
 
 			var loader = new THREE.TextureLoader();
 			function main() {
-				loader.load(
-					//图片路径    
-					'./iphone.jpg',
-					function(texture) {
+				loader.load('./iphone.jpg',texture =>{
 						const material = new THREE.MeshBasicMaterial({
 							map: texture
 						});
-						const geometry = new THREE.BoxGeometry(3, 3, 0); //z为0圆点不被遮住
+						console.log(texture)
+						const geometry = new THREE.BoxGeometry(texture.image.naturalWidth/100, texture.image.naturalHeight/100, 0); //z为0圆点不被遮住
+						 console.log(geometry.parameters)
 						const cube = new THREE.Mesh(geometry, material); // 创建这个mesh对象
+						//cube.scale.set(1, 1, -1)
 						//renderLine()
 						cube.position.x = 0;
 						cube.position.z = 0;
@@ -92,7 +97,7 @@
 				// 如果这边的颜色没有设置，那么就默认取canvas中的颜色
 				let material = new THREE.PointsMaterial({
 					color: 0xff0000,
-					size: 0.04,
+					size: 0.02,
 					map: texture,
 					transparent: true, //为true圆点没有黑边
 				});
@@ -137,7 +142,7 @@
 				var lineMaterial = new THREE.LineBasicMaterial({
 					color: '#ff0000'
 				});
-				texture.needsUpdate = true;
+				//texture.needsUpdate = true;
 				geometry2.vertices = pointsData;
 				var line = new THREE.Line(geometry2, lineMaterial);
 				scene.add(line);

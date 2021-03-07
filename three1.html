@@ -23,9 +23,7 @@
 	<body>
 		<script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.js"></script>
 		<script type="text/javascript">
-			var width =  600,
-				height =  600;
-				var timeout;
+			var width = 600,height = 600,timeout;
 			var scene = new THREE.Scene();
 			// 相机 正交相机（OrthographicCamera）、透视相机（PerspectiveCamera）、全景相机（CubeCamera）和3D相机（StereoCamera）。
 			var camera = new THREE.PerspectiveCamera(100, 1, 0.1, 1000);
@@ -34,8 +32,10 @@
 			var renderer = new THREE.WebGLRenderer({
 				antialias: true
 			});
+			
 			renderer.setSize(width, height);
 			document.body.appendChild(renderer.domElement);
+			
 
 
 			var loader = new THREE.TextureLoader();
@@ -60,6 +60,8 @@
 						console: error('发生错误');
 					}
 				);
+				
+				
 
 			function render() {
 				renderer.render(scene, camera);

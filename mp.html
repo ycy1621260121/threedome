@@ -34,14 +34,12 @@
 			});
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
-			
 			//创建画布
 			var canvas = document.createElement("canvas");
 			let context = canvas.getContext("2d");
 			var texture = new THREE.CanvasTexture(canvas);
 			// 创建一个几何模型（Geometry）,并添加点
 			var geometry = new THREE.PlaneGeometry(128, 32)
-			
 			//点得数据
 			var pointsData = [];
 			//创建点
@@ -59,7 +57,6 @@
 				let texture = new THREE.Texture(canvas);
 				//更新
 				texture.needsUpdate = true;
-
 				//创建点，是用PointsMaterial的map属性来设置材质
 				let geometry = new THREE.Geometry();
 				// vertices 表示顶点
@@ -71,9 +68,7 @@
 					map: texture,
 					transparent: true,//为true圆点没有黑边
 				});
-
 				let points = new THREE.Points(geometry, material);
-
 				return points;
 			}
 			
@@ -85,8 +80,7 @@
 			function onEvent(event) {
 			    //  获取坐标位置
 			    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-			    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-			    //  
+			    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1; 
 			    raycaster.setFromCamera(mouse, camera);
 			    //  获取选中后的第一个值， 因为可以投射获取，所以只需要获取第一个。
 			    const interects = raycaster.intersectObjects(scene.children, true)[0];
@@ -117,7 +111,6 @@
 						map: texture
 					});
 					// BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments)
-					
 					// width — X轴方向上的长.
 					// height — Y轴方向上的高.
 					// depth — Z轴方向上的宽.
@@ -126,11 +119,9 @@
 					// depthSegments — 可选项，z轴上的切割面，默认是1.
 					const geometry = new THREE.BoxGeometry(100, 100, 0); //z为0圆点不被遮住
 					const cube = new THREE.Mesh(geometry, material); // 创建这个mesh对象
-
 					cube.position.x = 0;
 					cube.position.z = 0;
 					cube.position.y = 0;
-
 					scene.add(cube); // 将新创建的带贴图的几何体添加到场景内，我们就可以看到了
 					render()
 				},

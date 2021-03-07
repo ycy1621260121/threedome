@@ -39,7 +39,6 @@
 
 
 			var loader = new THREE.TextureLoader();
-			function main() {
 				loader.load('./lottlybj.jpg',texture =>{
 						const material = new THREE.MeshBasicMaterial({
 							map: texture
@@ -61,8 +60,6 @@
 						console: error('发生错误');
 					}
 				);
-			}
-			main()
 
 			function render() {
 				renderer.render(scene, camera);
